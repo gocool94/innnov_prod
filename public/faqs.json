@@ -1,0 +1,110 @@
+{
+  "categories" : [
+    {
+        "name": "General",
+        "faqs": [
+            {"question": "What is Kipi Innovate?",
+            "answer": "Kipi Innovate is a platform designed to turn your innovative ideas into actionable solutions by fostering collaboration, transparency, and recognition within the organization."
+            },
+            {
+            "question": "Why should I use Kipi Innovate?",
+            "answer": "Kipi Innovate accelerates the ideation process, provides visibility to ideas, and ensures recognition for contributors, fostering a culture of innovation and continuous improvement."
+            }
+        ]
+    },
+    {
+        "name": "Idea Submission and Review",
+        "faqs": [
+            {
+                "question": "How do I submit an idea?",
+                "answer": "You can submit your idea using the intuitive submission form on the platform. You can also attach additional documents, such as mind maps or flowcharts, for better clarity."
+            },
+            {
+                "question": "Can I collaborate with others on my idea?",
+                "answer": "Yes, you can add contributors to your idea during the submission process and collaborate with team members to refine it."
+            },
+            {
+                "question": "What happens after I submit an idea?",
+                "answer": "After submission, your idea will be reviewed by relevant teams who will provide feedback and status updates."
+            },
+            {
+                "question": "What criteria are used to evaluate ideas?",
+                  "answer": "Ideas are evaluated based on their innovation, feasibility, potential impact, and alignment with organizational goals."
+            }
+            ]
+    },
+    {
+        "name": "Recognition and Rewards",
+        "faqs": [
+            {
+                "question": "How are contributions recognized?",
+                "answer": "Contributors earn \"Beans\" (points) at various stages, from idea submission to implementation. Top contributors are featured on leaderboards and awarded badges."
+            },
+            {
+                "question": "What rewards can I redeem with Beans?",
+                "answer": "Beans can be redeemed for gift cards, Kipi merchandise, recognition in newsletters, or fast-track promotion opportunities."                
+            },
+            {
+                "question": "What badges can I earn?",
+                "answer": "Some badges include the Rookie Innovator Badge (first idea submission), Knowledge Contributor Badge (detailed documentation), and Top Innovator Badge (winning the jury evaluation)."
+            }
+        ]      
+    },
+    {
+        "name": "Collaboration and Mentorship",
+        "faqs": [
+            {
+                "question": "Can I brainstorm ideas with others?",
+                "answer": "Yes, the platform offers brainstorming tools and encourages collaboration for ideation and problem-solving."
+            },
+            {
+                "question": "How can I mentor or collaborate on others’ ideas?",
+                "answer": "You can mentor teams or contribute to documentation. Mentors earn additional Beans for their contributions."
+            }
+        ]
+    },
+    {
+        "name": "Jury and Evaluation",
+        "faqs": [
+            {
+                "question": "What is the jury evaluation process?",
+                "answer": "The most promising ideas are presented to a jury, including potential partners like Snowflake. The jury evaluates the ideas based on their potential and impact."
+            },
+            {
+                "question": "What happens if my idea is selected by the jury?",
+                "answer": "Selected ideas are celebrated, and contributors are awarded significant Beans and recognition."
+            }
+        ]
+    },
+    {
+        "name": "Implementation and Impact",
+        "faqs": [
+            {
+                "question": "How is an idea implemented after approval?",
+                "answer": "The platform guides you through the implementation process with iterative development and testing. Mentors are available to support you."
+            },
+            {
+                "question": "How do I provide updates on my implemented idea?",
+                "answer": "Regular updates can be submitted through the platform to earn additional Beans and maintain visibility."
+            },
+            {
+                "question": "How is the impact of an implemented idea assessed?",
+                "answer": "The platform tracks metrics like cost savings, revenue increase, or productivity gains to evaluate the idea's success."
+            }
+        ]
+    },
+    {
+        "name": "Technical Support",
+        "faqs": [
+            {
+                "question": "Who do I contact if I face issues on the platform?",
+                "answer": "For technical assistance, reach out to the support team via the Help section in Kipiverse."
+            },
+            {
+                "question": "Can I edit my idea after submission?",
+                "answer": "Yes, you can edit or update your idea before it is reviewed."
+            }
+        ]
+    }
+    ]
+}

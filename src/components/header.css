@@ -1,0 +1,107 @@
+/* styles.css */
+
+/* Header Styles */
+header {
+    background: whitesmoke;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Logo and Site Name */
+  header .logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  header .logo img {
+    height: 32px;
+    width: 32px;
+    margin-right: 12px;
+  }
+  
+  header .logo h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #38a169; /* Use a variable for color if using a preprocessor */
+  }
+  
+  /* Navigation Links */
+  nav {
+    display: flex;
+    gap: 32px;
+  }
+  
+  nav a {
+    color: #01050c;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+  }
+  
+  nav a:hover {
+    color: #328b5c;
+  }
+  
+  nav a.active {
+    color: #38a169;
+    font-weight: bold;
+    border-bottom: 2px solid #38a169;
+  }
+  
+  /* Notification and User Icon */
+  .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .header-icons .icon {
+    color: #01050c;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .header-icons .icon:hover {
+    color: #38a169;
+  }
+  
+  /* Promotional Banner */
+  .promo-banner {
+    margin-top: 16px;
+    margin-left: 16px;
+    margin-right: 16px;
+    background-color: #6a11cb;
+    background: linear-gradient(90deg, rgba(75,70,167,1) 0%, rgba(111,111,179,1) 12%, rgba(92,129,192,1) 21%, rgba(82,138,199,1) 43%, rgba(59,142,189,1) 54%, rgba(102,131,162,1) 77%, rgba(0,212,255,1) 98%);
+    height: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .promo-banner p {
+    color: rgb(226, 225, 225);
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  .promo-banner button {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    padding: 8px 24px;
+    border-radius: 9999px;
+    transition: transform 0.3s;
+  }
+  
+  .promo-banner button:hover {
+    transform: scale(1.05);
+  }

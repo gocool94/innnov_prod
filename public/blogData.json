@@ -1,0 +1,102 @@
+[
+  {
+    "image": "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d",
+    "technology": "AWS",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+    "date": "03 Nov, 2024",
+    "title": "Introduction to AWS",
+    "description": "Learn the basics of AWS and how it can help you build scalable applications. This guide covers essential AWS services and best practices for beginners. You will learn about setting up an AWS account, deploying applications, and managing AWS resources. AWS offers a wide range of services, including computing power, storage options, and networking capabilities. By the end of this guide, you will have a solid understanding of how to leverage AWS for your projects and take advantage of its powerful features.",
+    "link": "/blogs/introduction-to-aws",
+    "learnItems": [
+      "Understanding AWS services",
+      "Setting up an AWS account",
+      "Deploying applications on AWS",
+      "Managing AWS resources"
+    ],
+    "requirements": [
+      "Basic knowledge of cloud computing",
+      "Access to an AWS account",
+      "Familiarity with web development"
+    ]
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1556761175-4b46a572b786",
+    "technology": "Snowflake",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/4/45/Snowflake_Logo.svg",
+    "date": "15 Oct, 2024",
+    "title": "Getting Started with Snowflake",
+    "description": "A beginner's guide to using Snowflake for data warehousing and analytics. Learn how to set up your account, load data, and perform queries efficiently. Snowflake is a cloud-based data warehousing solution that offers high performance, scalability, and ease of use. This guide will walk you through the process of getting started with Snowflake, including setting up your account, loading data, and running queries. By the end of this guide, you will have a solid understanding of how to use Snowflake for your data warehousing needs.",
+    "link": "/blogs/getting-started-with-snowflake",
+    "learnItems": [
+      "Understanding Snowflake architecture",
+      "Setting up a Snowflake account",
+      "Loading data into Snowflake",
+      "Querying data in Snowflake"
+    ],
+    "requirements": [
+      "Basic knowledge of SQL",
+      "Access to a Snowflake account",
+      "Familiarity with data warehousing concepts"
+    ]
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    "technology": "DBT",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Dbt_logo.png",
+    "date": "22 Sep, 2024",
+    "title": "DBT for Data Transformation",
+    "description": "Discover how DBT can streamline your data transformation processes. This guide covers setting up DBT projects, transforming data, and deploying models. DBT (Data Build Tool) is a powerful tool for transforming raw data into meaningful insights. In this guide, you will learn how to set up DBT projects, write transformation scripts, and deploy your models. DBT makes it easy to manage your data transformation workflows and ensures that your data is accurate and up-to-date. By the end of this guide, you will have a solid understanding of how to use DBT for your data transformation needs.",
+    "link": "/blogs/dbt-for-data-transformation",
+    "learnItems": [
+      "Introduction to DBT",
+      "Setting up DBT projects",
+      "Transforming data with DBT",
+      "Deploying DBT models"
+    ],
+    "requirements": [
+      "Basic knowledge of SQL",
+      "Familiarity with data transformation concepts",
+      "Access to a DBT account"
+    ]
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+    "technology": "React",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg",
+    "date": "10 Jan, 2025",
+    "title": "Building Modern Web Apps with React",
+    "description": "An in-depth guide to building modern web applications using React. Learn about components, state management, hooks, and deploying React applications. React is a popular JavaScript library for building user interfaces. This guide will walk you through the process of building a modern web application using React, including setting up your development environment, creating components, managing state, and using hooks. By the end of this guide, you will have a solid understanding of how to build and deploy React applications.",
+    "link": "/blogs/building-modern-web-apps-with-react",
+    "learnItems": [
+      "Understanding React components",
+      "Managing state with React",
+      "Using React hooks",
+      "Building and deploying React apps"
+    ],
+    "requirements": [
+      "Basic knowledge of JavaScript",
+      "Familiarity with web development",
+      "Access to a code editor"
+    ]
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+    "technology": "Node.js",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg",
+    "date": "05 Dec, 2024",
+    "title": "Server-Side Development with Node.js",
+    "description": "Learn how to build scalable server-side applications using Node.js. This guide covers setting up a server, building RESTful APIs, and deploying applications. Node.js is a powerful JavaScript runtime that allows you to build server-side applications with ease. In this guide, you will learn how to set up a Node.js server, create RESTful APIs, and deploy your applications. By the end of this guide, you will have a solid understanding of how to use Node.js for server-side development.",
+    "link": "/blogs/server-side-development-with-nodejs",
+    "learnItems": [
+      "Introduction to Node.js",
+      "Setting up a Node.js server",
+      "Building RESTful APIs with Node.js",
+      "Deploying Node.js applications"
+    ],
+    "requirements": [
+      "Basic knowledge of JavaScript",
+      "Familiarity with server-side development",
+      "Access to a Node.js environment"
+    ]
+  }
+]
