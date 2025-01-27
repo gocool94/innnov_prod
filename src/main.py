@@ -7,6 +7,16 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from uuid import uuid4
 import random
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("app.log"),  # Log to a file
+        logging.StreamHandler()         # Also output logs to the console
+    ]
+)
 
 app = FastAPI()
 
@@ -170,15 +180,19 @@ async def update_user(user: User):
         raise HTTPException(status_code=404, detail="User not found")
 
 # Fetch review ideas for a user
-@app.get("/review-ideas")
+@app.get("/api/review-ideas")
 async def get_review_ideas(ids: str = Query(...)):
-    idea_ids = ids.split(",")  # Split the comma-separated string into a list of UUIDs
+    idea_ids = ids.split(",")
     review_ideas = []
 
     for idea_id in idea_ids:
-        idea = ideas_collection.find_one({"idea_id": idea_id})  # Use idea_id (UUID) for querying
+        idea = ideas_collection.find_one({"idea_id": idea_id})
         if idea:
-            idea["_id"] = str(idea["_id"])  # Convert MongoDB ObjectId to string for consistency
+            idea["_id"] = str(idea["_id"])  # Convert ObjectId to string
             review_ideas.append(idea)
 
+    if not review_ideas:
+        raise HTTPException(status_code=404, detail="No ideas found.")
+
     return {"ideas": review_ideas}
+
