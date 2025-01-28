@@ -36,23 +36,33 @@ const MainHomepage = ({ userProfile, setIsLoggedIn }) => {
 
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/update-idea`, {
+      const response = await fetch(`http://localhost:8000/api/update-idea/${selectedIdea.idea_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedIdea),
+        body: JSON.stringify(selectedIdea), // Ensure `selectedIdea` has all required fields
       });
-
+  
       if (response.ok) {
-        console.log("Idea updated successfully.");
-        handleModalClose();
+        const data = await response.json();
+        console.log("Idea updated successfully:", data);
+  
         // Optionally refresh the ideas list
+        setIdeas((prevIdeas) =>
+          prevIdeas.map((idea) =>
+            idea.idea_id === selectedIdea.idea_id ? { ...selectedIdea } : idea
+          )
+        );
+  
+        handleModalClose();
       } else {
-        console.error("Failed to update the idea.");
+        const errorData = await response.json();
+        console.error("Failed to update the idea:", errorData.detail || errorData);
       }
     } catch (error) {
       console.error("Error updating idea:", error);
     }
   };
+  
 
   useEffect(() => {
     console.log("User profile:", userProfile); // Debugging userProfile
@@ -99,6 +109,8 @@ const MainHomepage = ({ userProfile, setIsLoggedIn }) => {
     console.log("User profile not available yet.");
     return <p>Loading...</p>;
   }
+
+  
 
   return (
     <div className="min-h-screen bg-gray-100">

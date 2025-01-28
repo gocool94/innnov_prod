@@ -8,6 +8,8 @@ import os
 from uuid import uuid4
 import random
 import logging
+from uuid import uuid4
+from pydantic import BaseModel, Field
 
 logging.basicConfig(
     level=logging.INFO,
@@ -46,7 +48,7 @@ class User(BaseModel):
 
 # Idea Model
 class IdeaForm(BaseModel):
-    idea_id: str = str(uuid4())  # Generate a unique ID for each idea
+    idea_id: str = Field(default_factory=lambda: str(uuid4()))  # Generate unique ID for each idea
     name: str
     email: str
     ideaTitle: str
@@ -61,12 +63,12 @@ class IdeaForm(BaseModel):
     implementIdea: Optional[str] = None
     googleLink: Optional[str] = None
     status: Optional[str] = None
-    # Fields for comments and reviews (optional)
     comment_name: Optional[str] = None
     review_date: Optional[str] = None
     comments: Optional[str] = None
     grading: Optional[str] = None
     feedback: Optional[str] = None
+
 
 # Create a new user if they don't exist
 @app.post("/users/login/")
@@ -85,6 +87,13 @@ async def login_user(user: User):
 # Create a new idea
 @app.post("/ideas/")
 async def create_idea(idea: IdeaForm):
+    # Ensure the idea_id is unique
+    while True:
+        new_idea_id = str(uuid4())  # Generate a unique ID
+        if not ideas_collection.find_one({"idea_id": new_idea_id}):  # Check if it already exists
+            idea.idea_id = new_idea_id
+            break  # Exit the loop once a unique ID is found
+
     # Check if the email belongs to an existing user
     user = users_collection.find_one({"email": idea.email})
     if not user:
@@ -95,34 +104,37 @@ async def create_idea(idea: IdeaForm):
     ideas_collection.insert_one(idea_dict)
 
     # Fetch users who are reviewers (is_reviewer: True)
-    reviewers = list(users_collection.find({"is_reviewer": True}))  # Get all users with is_reviewer=True
+    reviewers = list(users_collection.find({"is_reviewer": True}))
     if not reviewers:
         raise HTTPException(status_code=404, detail="No reviewers available to assign the idea.")
 
     # Randomly select a reviewer from the list
     random_reviewer = random.choice(reviewers)
 
-    # Update the randomly selected reviewer to add the idea_id to their review_ideas and increment review_count
+    # Update the selected reviewer to add the idea_id to their review_ideas and increment review_count
     users_collection.update_one(
         {"_id": random_reviewer["_id"]},
         {
             "$inc": {"review_count": 1},  # Increment the review count for the reviewer
-            "$addToSet": {"review_ideas": idea.idea_id},  # Add the idea_id to the review_ideas list of the reviewer
+            "$addToSet": {"review_ideas": idea.idea_id},  # Add the idea_id to the review_ideas list
         }
     )
 
-    # If the user submitting the idea is not a reviewer, you can update their review count if desired
+    # Update the user submitting the idea (if they are not a reviewer)
     if not user.get("is_reviewer", False):
-        # Optionally: you can add the idea to this user's list of ideas or increment their review_count
-        # But you can leave this out if not needed
         users_collection.update_one(
             {"email": idea.email},
-            {"$inc": {"review_count": 1}}  # This is optional
+            {
+                "$push": {"submitted_ideas": idea.idea_id},  # Add the idea to their submitted ideas list
+                "$setOnInsert": {"review_count": 0}  # Initialize review_count if not already set
+            },
+            upsert=True
         )
 
-    return {"message": f"Idea created successfully and randomly assigned to {random_reviewer['name']}!", "idea_id": idea.idea_id}
-
-# Fetch all ideas
+    return {
+        "message": f"Idea created successfully and randomly assigned to {random_reviewer['name']}!",
+        "idea_id": idea.idea_id
+    }# Fetch all ideas
 @app.get("/ideas/")
 async def get_all_ideas():
     ideas = []
@@ -140,7 +152,7 @@ async def get_idea(idea_id: str):
     return idea
 
 # Update an idea
-@app.put("/ideas/{idea_id}")
+"""@app.put("/ideas/{idea_id}")
 async def update_idea(idea_id: str, idea: IdeaForm):
     result = ideas_collection.update_one(
         {"idea_id": idea_id},
@@ -150,7 +162,7 @@ async def update_idea(idea_id: str, idea: IdeaForm):
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Idea not found or not modified")
 
-    return {"message": "Idea updated successfully!"}
+    return {"message": "Idea updated successfully!"}"""
 
 # Fetch user details
 @app.get("/users/{email}")
@@ -195,4 +207,21 @@ async def get_review_ideas(ids: str = Query(...)):
         raise HTTPException(status_code=404, detail="No ideas found.")
 
     return {"ideas": review_ideas}
+
+@app.put("/api/update-idea/{idea_id}")
+async def update_idea(idea_id: str, idea: IdeaForm):
+    logging.info(f"Received payload: {idea.dict()}")  # Log the incoming data
+    
+    result = ideas_collection.update_one(
+        {"idea_id": idea_id},
+        {"$set": idea.dict(exclude_unset=True)}
+    )
+
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Idea not found or not modified")
+    
+    return {"message": "Idea updated successfully!"}
+
+
+
 
