@@ -16,7 +16,7 @@ const ShareUpdateModal = ({ toggleModal, userProfile }) => {
     implementIdea: "",
     googleLink: "",
   });
-  
+
   // Initializing the status to null (could also be "Submitted" or another status)
   const [status, setStatus] = useState("");
 
@@ -35,28 +35,23 @@ const ShareUpdateModal = ({ toggleModal, userProfile }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Prepare payload to include the 'status' field
+  // Prepare payload to include 'status' and 'beans'
   const preparePayload = () => {
     return {
       ...formData,
       status: "Submitted", // Add the status field with the value "Submitted"
-      ideaCategory: formData.ideaCategory
-        .split(",")
-        .map((item) => item.trim()),
-      toolsTechnologies: formData.toolsTechnologies
-        .split(",")
-        .map((item) => item.trim()),
-      primaryBeneficiary: formData.primaryBeneficiary
-        .split(",")
-        .map((item) => item.trim()),
+      beans: 100, // Automatically add 100 beans when submitting an idea
+      ideaCategory: formData.ideaCategory.split(",").map((item) => item.trim()),
+      toolsTechnologies: formData.toolsTechnologies.split(",").map((item) => item.trim()),
+      primaryBeneficiary: formData.primaryBeneficiary.split(",").map((item) => item.trim()),
     };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = preparePayload(); // This now includes the "status"
-    console.log("Prepared Payload:", payload);  // Check the payload to confirm it includes the status
+    const payload = preparePayload();
+    console.log("Prepared Payload:", payload); // Check the payload to confirm it includes the status and beans
 
     try {
       const response = await fetch("http://127.0.0.1:8000/ideas/", {
@@ -75,7 +70,6 @@ const ShareUpdateModal = ({ toggleModal, userProfile }) => {
       const data = await response.json();
       console.log("Idea submitted successfully:", data);
 
-      // Status update is handled in the backend, but we can still update it on the frontend.
       setStatus("Submitted");
       console.log("Status updated to Submitted");
 
@@ -185,73 +179,7 @@ const ShareUpdateModal = ({ toggleModal, userProfile }) => {
             />
 
             <label className="text-gray-700 font-semibold">
-              Value Add (In Words)
-            </label>
-            <textarea
-              name="valueAddWords"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Explain the value add"
-              rows="4"
-              value={formData.valueAddWords}
-              onChange={handleChange}
-            ></textarea>
-
-            <label className="text-gray-700 font-semibold">
-              Tools & Technologies (Comma-Separated)
-            </label>
-            <input
-              type="text"
-              name="toolsTechnologies"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Technologies (e.g., AI, Blockchain)"
-              value={formData.toolsTechnologies}
-              onChange={handleChange}
-            />
-
-            <label className="text-gray-700 font-semibold">Contributors</label>
-            <input
-              type="text"
-              name="contributors"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Contributors (Optional)"
-              value={formData.contributors}
-              onChange={handleChange}
-            />
-
-            <label className="text-gray-700 font-semibold">Complexity</label>
-            <input
-              type="text"
-              name="complexity"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Complexity (Optional)"
-              value={formData.complexity}
-              onChange={handleChange}
-            />
-
-            <label className="text-gray-700 font-semibold">
-              Primary Beneficiaries (Comma-Separated)
-            </label>
-            <input
-              type="text"
-              name="primaryBeneficiary"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Beneficiaries (e.g., Students, Developers)"
-              value={formData.primaryBeneficiary}
-              onChange={handleChange}
-            />
-
-            <label className="text-gray-700 font-semibold">Implementation</label>
-            <textarea
-              name="implementIdea"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Implementation details (Optional)"
-              rows="4"
-              value={formData.implementIdea}
-              onChange={handleChange}
-            ></textarea>
-
-            <label className="text-gray-700 font-semibold">
-              Google Link to Resources
+              Google Link
             </label>
             <input
               type="url"

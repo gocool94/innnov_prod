@@ -1,38 +1,72 @@
 import React, { useEffect, useState } from "react";
 import IdeaDetailsModal from "./IdeaDetailsModal";
 
-const MyIdeas = () => {
+const MyIdeas = ({ userProfile }) => {
   const [ideas, setIdeas] = useState([]);
-  const [totalBeans, setTotalBeans] = useState(0); // State for total beans earned
-  const [selectedIdea, setSelectedIdea] = useState(null); // State for selected idea
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  // Fetch ideas when component mounts
+  const [totalBeans, setTotalBeans] = useState(0);
+  const [selectedIdea, setSelectedIdea] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
-    const fetchIdeas = async () => {
+    if (!userProfile?.email) {
+      console.log("🚨 No user email found. Skipping fetch.");
+      return; // Prevent fetching if no user is logged in
+    }
+
+    console.log(`🔹 Fetching ideas for user: ${userProfile.email}`);
+
+    const fetchUserIdeas = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/fetch_ideas");
+        const encodedEmail = encodeURIComponent(userProfile.email);
+        console.log(`📡 API Request: GET /fetch_ideas/${encodedEmail}`);
+        
+        const response = await fetch(`http://127.0.0.1:8000/fetch_ideas/${encodedEmail}`);
+        
         if (!response.ok) {
-          throw new Error("Failed to fetch ideas");
+          const errorText = await response.text();
+          console.error(`❌ Error fetching user ideas: ${response.status} - ${errorText}`);
+          return;
         }
+
         const data = await response.json();
+        console.log("✅ User Ideas Fetched:", data);
+
         setIdeas(data);
-        
-        // Calculate total beans earned
-        const beansEarned = data.reduce((total, idea) => {
-          return total + (idea.beansEarned || 0); // Assuming beansEarned is a property in idea
-        }, 0);
-        setTotalBeans(beansEarned);
-        
       } catch (error) {
-        console.error("Error fetching ideas:", error);
+        console.error("🚨 Network error fetching user ideas:", error);
       }
     };
 
-    fetchIdeas();
-  }, []);
+    const fetchUserData = async () => {
+      try {
+        const encodedEmail = encodeURIComponent(userProfile.email);
+        console.log(`📡 API Request: GET /users/${encodedEmail}`);
+        
+        const response = await fetch(`http://127.0.0.1:8000/users/${encodedEmail}`);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`❌ Error fetching user data: ${response.status} - ${errorText}`);
+          return;
+        }
+
+        const userData = await response.json();
+        console.log("✅ User Profile Data Fetched:", userData);
+
+        setTotalBeans(userData.beans || 0);
+      } catch (error) {
+        console.error("🚨 Network error fetching user profile:", error);
+      }
+    };
+
+    fetchUserIdeas();
+    fetchUserData();
+  }, [userProfile]);
+
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const handleViewClick = (idea) => {
+    console.log(`📂 Opening modal for idea:`, idea);
     setSelectedIdea(idea);
     toggleModal();
   };
@@ -41,7 +75,8 @@ const MyIdeas = () => {
     <div className="mt-4 mx-4">
       <div className="bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">My Ideas</h2>
-        
+
+        {/* Beans Earned from Profile */}
         <div className="flex justify-between items-center mb-4">
           <div className="p-4 border border-yellow-400 bg-yellow-100 rounded-lg">
             <span className="text-lg font-semibold">
@@ -68,7 +103,7 @@ const MyIdeas = () => {
               </tr>
             ) : (
               ideas.map((idea) => (
-                <tr key={idea._id} className="hover:bg-gray-100 transition-colors">
+                <tr key={idea.idea_id} className="hover:bg-gray-100 transition-colors">
                   <td className="border-b py-2 px-4">{idea.ideaTitle}</td>
                   <td className="border-b py-2 px-4">{idea.ideaDescription}</td>
                   <td className="border-b py-2 px-4">{idea.dateSubmitted}</td>
@@ -87,11 +122,11 @@ const MyIdeas = () => {
           </tbody>
         </table>
       </div>
-    
-    {isModalOpen && (
-      <IdeaDetailsModal idea={selectedIdea} toggleModal={toggleModal} />
-    )}
-  </div>
+
+      {isModalOpen && (
+        <IdeaDetailsModal idea={selectedIdea} toggleModal={toggleModal} />
+      )}
+    </div>
   );
 };
 

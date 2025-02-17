@@ -10,7 +10,8 @@ import Header from "./components/Header";
 import InnovationPage from "./components/InnovationPage";
 import FAQ from "./components/FAQ";
 import Blogs from "./components/Blogs";
-import BlogDetail from './components/BlogDetail';
+import BlogDetail from "./components/BlogDetail";
+import AdminDashboard from "./components/AdminDashboard";  // Import Admin Page
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,39 +25,33 @@ function App() {
 
   return (
     <Router>
-    <div>
-    {/* Render Header only if the user is logged in */}
-    {isLoggedIn && <Header initial={initial} userProfile={userProfile} />}
+      <div>
+        {/* Render Header only if the user is logged in */}
+        {isLoggedIn && <Header initial={initial} userProfile={userProfile} />}
 
-      <Routes>
-        {/* Redirect directly to MainHomepage if logged in */}
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? (
-              <MainHomepage userProfile={userProfile} />
-            ) : (
-              <Homepage onLoginSuccess={handleLoginSuccess} />
-            )
-          }
-        />
-        {/* MainHomepage route */}
-        <Route
-          path="/mainhomepage"
-          element={<MainHomepage userProfile={userProfile} />}
-        />
-        <Route path="/browse-ideas" element={<BrowseIdeas />} />
-          <Route path="/my-ideas" element={<MyIdeas />} />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isLoggedIn ? (
+                <MainHomepage userProfile={userProfile} />
+              ) : (
+                <Homepage onLoginSuccess={handleLoginSuccess} />
+              )
+            }
+          />
+          <Route path="/mainhomepage" element={<MainHomepage userProfile={userProfile} />} />
+          <Route path="/browse-ideas" element={<BrowseIdeas />} />
+          <Route path="/my-ideas" element={<MyIdeas userProfile={userProfile} />} />
           <Route path="/review-ideas" element={<ReviewIdeas />} />
           <Route path="/contact-us" element={<ContactUs />} />
-          <Route path="/innovation" element={<InnovationPage />} /> 
+          <Route path="/innovation" element={<InnovationPage />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/blogs/:blogId" element={<BlogDetail />} />
           <Route path="/blogs" element={<Blogs />} />
-      </Routes>
+          <Route path="/admin" element={<AdminDashboard />} />  {/* New Admin Route */}
+        </Routes>
       </div>
-    
-      
     </Router>
   );
 }

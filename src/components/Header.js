@@ -80,7 +80,7 @@ const Header = ({ initial, userProfile }) => {
               activeClassName="text-green-600 font-bold border-b-2 border-green-600"
               className="text-gray-700 hover:text-green-600 flex items-center"
             >
-              <FaBlog className="mr-2" /> Blogs
+              <FaBlog className="mr-2" /> Latest in Market
             </NavLink>
           </nav>
 

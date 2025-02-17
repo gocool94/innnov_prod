@@ -36,20 +36,29 @@ const MainHomepage = ({ userProfile, setIsLoggedIn }) => {
 
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/update-idea/${selectedIdea.idea_id}`, {
+      // Extract only the allowed fields for update
+      const updatedFields = {
+        ideaTitle: selectedIdea.ideaTitle,
+        ideaDescription: selectedIdea.ideaDescription,
+        valueAddWords: selectedIdea.valueAddWords,
+        googleLink: selectedIdea.googleLink,
+        status: selectedIdea.status, // If status is editable
+      };
+  
+      const response = await fetch(`http://localhost:8000/api/edit-idea-fields/${selectedIdea.idea_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedIdea), // Ensure `selectedIdea` has all required fields
+        body: JSON.stringify(updatedFields),
       });
   
       if (response.ok) {
         const data = await response.json();
         console.log("Idea updated successfully:", data);
   
-        // Optionally refresh the ideas list
+        // Update ideas list only for modified fields
         setIdeas((prevIdeas) =>
           prevIdeas.map((idea) =>
-            idea.idea_id === selectedIdea.idea_id ? { ...selectedIdea } : idea
+            idea.idea_id === selectedIdea.idea_id ? { ...idea, ...updatedFields } : idea
           )
         );
   
@@ -62,6 +71,7 @@ const MainHomepage = ({ userProfile, setIsLoggedIn }) => {
       console.error("Error updating idea:", error);
     }
   };
+  
   
 
   useEffect(() => {
@@ -119,124 +129,212 @@ const MainHomepage = ({ userProfile, setIsLoggedIn }) => {
           Welcome, {userProfile?.email || "Guest"}! Here is your Idea Status:
         </h2>
         <div className="grid grid-cols-5 gap-4">
-          <StatusCard
-            title="Beans Earned"
-            count={userProfile?.beans || 0}
-            bgColor="bg-yellow-200"
-          />
-          <StatusCard
-            title="Ideas Shared"
-            count={userProfile?.ideasShared || 0}
-            bgColor="bg-blue-200"
-          />
-          <StatusCard
-            title="Ideas Accepted"
-            count={userProfile?.ideasAccepted || 0}
-            bgColor="bg-green-200"
-          />
-          <StatusCard
-            title="Review Pending"
-            count={userProfile?.reviewPending || 0}
-            bgColor="bg-orange-200"
-          />
-          <StatusCard
-            title="Ideas Tried"
-            count={userProfile?.ideasTried || 0}
-            bgColor="bg-red-200"
-          />
-        </div>
+  {/* Beans Earned */}
+  <StatusCard
+    title="Beans Earned"
+    count={userProfile?.beans || 0} // Directly from userProfile
+    bgColor="bg-yellow-200"
+  />
+
+  {/* Ideas Shared */}
+  <StatusCard
+    title="Ideas Shared"
+    count={userProfile?.submitted_ideas?.length || 0} // Count submitted ideas
+    bgColor="bg-blue-200"
+  />
+
+  {/* Ideas Accepted */}
+  <StatusCard
+    title="Ideas Accepted"
+    count={ideas.filter((idea) => idea.status === "Approved").length || 0} // Count accepted ideas
+    bgColor="bg-green-200"
+  />
+
+  {/* Review Pending */}
+  <StatusCard
+    title="Review Pending"
+    count={userProfile?.review_ideas?.length || 0} // Count review ideas
+    bgColor="bg-orange-200"
+  />
+
+  {/* Ideas Tried (Needs logic) */}
+  <StatusCard
+    title="Ideas Tried"
+    count={0} // Placeholder, define logic if needed
+    bgColor="bg-red-200"
+  />
+</div>
+
       </div>
 
       {userProfile?.is_reviewer && (
-        <div className="container mx-auto px-4 py-6">
-          <div className="bg-yellow-100 p-4 rounded-lg shadow-lg mt-4">
-            <h3 className="text-lg font-semibold text-gray-800">
-              You are a reviewer!
-            </h3>
-            {loading ? (
-              <p>Loading review ideas...</p>
-            ) : (
-              <div className="overflow-x-auto mt-4">
-                {userProfile?.review_ideas.length === 0 ? (
-                  <p>No ideas under review at the moment.</p>
-                ) : (
-                  <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-700">
-                        <th className="py-2 px-4 border-b">Title</th>
-                        <th className="py-2 px-4 border-b">Description</th>
-                        <th className="py-2 px-4 border-b">Status</th>
-                        <th className="py-2 px-4 border-b">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ideas.map((idea) => (
-                        <tr key={idea.idea_id} className="border-b">
-                          <td className="py-2 px-4">{idea.ideaTitle}</td>
-                          <td className="py-2 px-4">{idea.ideaDescription}</td>
-                          <td className="py-2 px-4">
-                            {idea.status || "N/A"}
-                          </td>
-                          <td className="py-2 px-4">
-                            <button
-                              onClick={() => handleModalOpen(idea)}
-                              className="text-blue-500 hover:underline"
-                            >
-                              Review
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-          </div>
+  <div className="container mx-auto px-4 py-6">
+    <div className="bg-yellow-100 p-4 rounded-lg shadow-lg mt-4">
+      <h3 className="text-lg font-semibold text-gray-800">You are a reviewer!</h3>
+      {loading ? (
+        <p>Loading review ideas...</p>
+      ) : (
+        <div className="overflow-x-auto mt-4">
+          {ideas.length === 0 ? (
+            <p className="text-gray-600 text-center py-4">No ideas under review at the moment.</p>
+          ) : (
+            <table className="min-w-full border border-gray-300 rounded-lg shadow-lg">
+              <thead>
+                <tr className="bg-gray-200 text-gray-700 text-left">
+                  <th className="py-3 px-4 border-b">Title</th>
+                  <th className="py-3 px-4 border-b">Description</th>
+                  <th className="py-3 px-4 border-b text-center">Status</th>
+                  <th className="py-3 px-4 border-b text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ideas.map((idea, index) => (
+                  <tr
+                    key={idea.idea_id}
+                    className={`border-b ${
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    } hover:bg-gray-100 transition`}
+                  >
+                    <td className="py-3 px-4 font-semibold text-gray-900">{idea.ideaTitle}</td>
+                    <td className="py-3 px-4 text-gray-700 truncate max-w-xs">{idea.ideaDescription}</td>
+                    <td className="py-3 px-4 text-center font-medium">
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+  idea.status === "Approved"
+    ? "bg-green-200 text-green-700"
+    : idea.status === "Submitted"
+    ? "bg-yellow-200 text-yellow-700"
+    : idea.status === "Pending"
+    ? "bg-yellow-200 text-yellow-700"
+    : idea.status === "Rejected"
+    ? "bg-red-200 text-red-700"
+    : "bg-gray-200 text-gray-700"
+}`}>
+  {idea.status || "N/A"}
+</span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <button
+                        onClick={() => handleModalOpen(idea)}
+                        className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md transition font-medium shadow-md"
+                      >
+                        Review
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
+    </div>
+  </div>
+)}
 
       {isModalOpen && selectedIdea && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-6 w-3/4 max-h-screen overflow-y-auto">
-            <h3 className="text-xl font-bold mb-4">Idea Details</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {Object.keys(selectedIdea).map((key) => (
-                <div key={key} className="flex flex-col">
-                  <label className="text-gray-700 font-semibold">
-                    {key}
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedIdea[key] || ""}
-                    onChange={(e) =>
-                      setSelectedIdea((prev) => ({
-                        ...prev,
-                        [key]: e.target.value,
-                      }))
-                    }
-                    className="border border-gray-300 p-2 rounded"
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-end mt-4 gap-4">
-              <button
-                onClick={handleModalClose}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-              >
-                Close
-              </button>
-              <button
-                onClick={handleUpdate}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                Update
-              </button>
-            </div>
-          </div>
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white rounded-lg p-6 w-3/4 max-h-screen overflow-y-auto">
+      <h3 className="text-xl font-bold mb-4">Review Idea</h3>
+      <div className="grid grid-cols-2 gap-4">
+        {/* Read-Only Fields */}
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Submitter Name</label>
+          <input
+            type="text"
+            value={selectedIdea.name || ""}
+            readOnly
+            className="border border-gray-300 p-2 rounded bg-gray-200"
+          />
         </div>
-      )}
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Email</label>
+          <input
+            type="text"
+            value={selectedIdea.email || ""}
+            readOnly
+            className="border border-gray-300 p-2 rounded bg-gray-200"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Title</label>
+          <input
+            type="text"
+            value={selectedIdea.ideaTitle || ""}
+            readOnly
+            className="border border-gray-300 p-2 rounded bg-gray-200"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Description</label>
+          <textarea
+            value={selectedIdea.ideaDescription || ""}
+            readOnly
+            className="border border-gray-300 p-2 rounded bg-gray-200"
+          ></textarea>
+        </div>
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Value Add (Words)</label>
+          <textarea
+            value={selectedIdea.valueAddWords || ""}
+            readOnly
+            className="border border-gray-300 p-2 rounded bg-gray-200"
+          ></textarea>
+        </div>
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Google Link</label>
+          <input
+            type="text"
+            value={selectedIdea.googleLink || ""}
+            readOnly
+            className="border border-gray-300 p-2 rounded bg-gray-200"
+          />
+        </div>
+
+        {/* Editable Fields */}
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Grading Score</label>
+          <input
+            type="text"
+            value={selectedIdea.gradingScore || ""}
+            onChange={(e) => setSelectedIdea((prev) => ({ ...prev, gradingScore: e.target.value }))}
+            className="border border-gray-300 p-2 rounded"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Comments</label>
+          <textarea
+            value={selectedIdea.comments || ""}
+            onChange={(e) => setSelectedIdea((prev) => ({ ...prev, comments: e.target.value }))}
+            className="border border-gray-300 p-2 rounded"
+          ></textarea>
+        </div>
+        <div className="flex flex-col">
+          <label className="text-gray-700 font-semibold">Status</label>
+          <input
+            type="text"
+            value={selectedIdea.status || ""}
+            onChange={(e) => setSelectedIdea((prev) => ({ ...prev, status: e.target.value }))}
+            className="border border-gray-300 p-2 rounded"
+          />
+        </div>
+      </div>
+      <div className="flex justify-end mt-4 gap-4">
+        <button
+          onClick={handleModalClose}
+          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+        >
+          Close
+        </button>
+        <button
+          onClick={handleUpdate}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Update
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       <div className="container mx-auto px-4 py-6 grid grid-cols-2 gap-4">
         <TopSubmittersList />

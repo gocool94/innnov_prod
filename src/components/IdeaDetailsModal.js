@@ -3,67 +3,91 @@ import React from "react";
 const IdeaDetailsModal = ({ idea, toggleModal }) => {
   if (!idea) return null;
 
+  // Function to determine the status step
+  const getStatusStep = (status) => {
+    switch (status) {
+      case "Submitted":
+        return 1;
+      case "Pending approval":
+        return 2;
+      case "Approved/rejected":
+        return 3;
+      case "Done":
+        return 4;
+      default:
+        return 1;
+    }
+  };
+
+  const currentStep = getStatusStep(idea.status || "Submitted");
+
   return (
-    <div
-      className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50"
-      onClick={toggleModal}
-    >
-      <div
-        className="bg-white p-8 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto"
-        style={{ width: "75vw", maxWidth: "1200px" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-3xl font-bold mb-6 text-green-700">Idea Details</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label className="text-gray-700 font-semibold">Submitter Name</label>
-          <p className="px-3 py-2 border rounded-lg">{idea.name}</p>
-
-          <label className="text-gray-700 font-semibold">Submitter Email</label>
-          <p className="px-3 py-2 border rounded-lg">{idea.email}</p>
-
-          <label className="text-gray-700 font-semibold">Idea Title</label>
-          <p className="px-3 py-2 border rounded-lg">{idea.ideaTitle}</p>
-
-          <label className="text-gray-700 font-semibold">
-              Idea Description
-            </label>
-            <textarea
-              name="ideaDescription"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Describe your idea here"
-              rows="4"
-              value={idea.ideaDescription}
-            ></textarea>
-
-            <label className="text-gray-700 font-semibold">
-              Value Add in Words
-            </label>
-            <textarea
-              name="valueAddWords"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Explain the value add"
-              rows="4"
-              value={idea.valueAddWords}
-            ></textarea>
-
-          <label className="text-gray-700 font-semibold">
-              Google Link to Resource
-            </label>
-            <input
-              type="url"
-              name="googleLink"
-              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Google link"
-              value={idea.googleLink}
-              
-            />
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white rounded-lg p-6 w-3/4 max-h-screen overflow-y-auto shadow-lg">
+        
+        {/* Tracking Status Progress Bar */}
+        <div className="mb-6">
+          <div className="flex justify-between mb-2">
+            <span className={`${currentStep >= 1 ? 'text-green-600 font-bold' : 'text-gray-400'}`}>Submitted</span>
+            <span className={`${currentStep >= 2 ? 'text-green-600 font-bold' : 'text-gray-400'}`}>Pending approval</span>
+            <span className={`${currentStep >= 3 ? 'text-green-600 font-bold' : 'text-gray-400'}`}>Approved/Rejected</span>
+            <span className={`${currentStep === 4 ? 'text-green-600 font-bold' : 'text-gray-400'}`}>Done</span>
+          </div>
+          <div className="h-2 w-full bg-gray-300 rounded">
+            <div
+              className={`h-full bg-green-600 rounded transition-all duration-500`}
+              style={{ width: `${(currentStep / 4) * 100}%` }}
+            ></div>
+          </div>
         </div>
-        <button
-          className="mt-4 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300"
-          onClick={toggleModal}
-        >
-          Close
-        </button>
+
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">{idea.ideaTitle}</h3>
+
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <p className="text-gray-700 font-semibold">Name:</p>
+            <p className="text-gray-900 mb-4">{idea.name || "N/A"}</p>
+
+            <p className="text-gray-700 font-semibold">Email:</p>
+            <p className="text-gray-900 mb-4">{idea.email || "N/A"}</p>
+
+            <p className="text-gray-700 font-semibold">Idea Title:</p>
+            <p className="text-gray-900 mb-4">{idea.ideaTitle || "N/A"}</p>
+          </div>
+
+          <div>
+            <p className="text-gray-700 font-semibold">Idea Category:</p>
+            <p className="text-gray-900 mb-4">{idea.ideaCategory?.join(", ") || "N/A"}</p>
+
+            <p className="text-gray-700 font-semibold">Idea Description:</p>
+            <p className="text-gray-900 mb-4">{idea.ideaDescription || "N/A"}</p>
+
+            <p className="text-gray-700 font-semibold">Value Add:</p>
+            <p className="text-gray-900 mb-4">{idea.valueAdd || "N/A"}</p>
+          </div>
+        </div>
+
+        {/* Google Link */}
+        <div className="mt-4">
+          <p className="text-gray-700 font-semibold">Google Link:</p>
+          {idea.googleLink ? (
+            <a href={idea.googleLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+              Open Link
+            </a>
+          ) : (
+            <p className="text-gray-900">N/A</p>
+          )}
+        </div>
+
+        {/* ❌ Close Button */}
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={toggleModal}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );

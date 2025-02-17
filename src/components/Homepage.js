@@ -18,6 +18,7 @@ const Homepage = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showTraditionalLogin, setShowTraditionalLogin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,22 +35,22 @@ const Homepage = ({ onLoginSuccess }) => {
         const response = await fetch(`http://127.0.0.1:8000/users/${username}`, {
           method: "GET",
         });
-  
+
         if (!response.ok) {
           throw new Error("Failed to fetch user details");
         }
-  
+
         const userDetails = await response.json();
-  
+
         // Save user details to localStorage
         localStorage.setItem("user", JSON.stringify(userDetails));
         setIsLoggedIn(true);
-  
+
         // Pass user details to parent component
         onLoginSuccess(userDetails);
-  
+
         // Navigate to MainHomepage
-        navigate("/mainhomepage"); // Ensure this route exists in your React Router
+        navigate("/mainhomepage");
       } catch (error) {
         setError("Error fetching user details. Please try again.");
         console.error("Error:", error);
@@ -57,6 +58,11 @@ const Homepage = ({ onLoginSuccess }) => {
     } else {
       setError("Invalid username or password");
     }
+  };
+
+  const handleGoogleSignIn = () => {
+    // Redirect to Google Sign-In (Backend API or Firebase)
+    window.location.href = "http://127.0.0.1:8000/auth/google"; // Replace with actual Google OAuth URL
   };
 
   const handleLogout = () => {
@@ -90,7 +96,7 @@ const Homepage = ({ onLoginSuccess }) => {
           alignItems: "center",
           justifyContent: "flex-end",
           width: "400px",
-          height: "200px",
+          height: showTraditionalLogin ? "260px" : "200px",
         }}
       >
         {isLoggedIn ? (
@@ -116,65 +122,109 @@ const Homepage = ({ onLoginSuccess }) => {
           </div>
         ) : (
           <div style={{ width: "100%" }}>
-            <div style={{ marginBottom: "10px" }}>
-              <label style={{ fontWeight: "normal", fontFamily: "-moz-initial" }}>
-                Email:
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+            {!showTraditionalLogin ? (
+              <>
+                {/* Google Sign-In Button */}
+                <button
                   style={{
-                    marginLeft: "28px",
-                    padding: "2px",
-                    borderRadius: "3px",
-                    fontFamily: "sans-serif",
-                    fontWeight: "normal",
-                    border: "1px solid #ccc",
-                    width: "275px",
-                    height: "30px",
+                    backgroundColor: "#4285F4",
+                    border: "none",
+                    color: "white",
+                    padding: "10px 20px",
+                    fontSize: "16px",
+                    marginBottom: "10px",
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                    transition: "background-color 0.3s ease",
+                    width: "100%",
                   }}
-                />
-              </label>
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label style={{ fontWeight: "normal", fontFamily: "-moz-initial" }}>
-                Password:
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onClick={handleGoogleSignIn}
+                >
+                  Sign in with Google
+                </button>
+
+                {/* Show Traditional Login Button */}
+                <button
                   style={{
-                    marginLeft: "5px",
-                    padding: "5px",
-                    borderRadius: "3px",
-                    fontFamily: "sans-serif",
-                    fontWeight: "normal",
-                    border: "1px solid #ccc",
-                    width: "275px",
-                    height: "30px",
+                    backgroundColor: "#4CAF50",
+                    border: "none",
+                    color: "white",
+                    padding: "10px 20px",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                    transition: "background-color 0.3s ease",
+                    width: "100%",
                   }}
-                />
-              </label>
-            </div>
-            {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <button
-                style={{
-                  backgroundColor: "#4CAF50",
-                  border: "none",
-                  color: "white",
-                  padding: "10px 20px",
-                  fontSize: "16px",
-                  margin: "5px 0",
-                  cursor: "pointer",
-                  borderRadius: "4px",
-                  transition: "background-color 0.3s ease",
-                }}
-                onClick={handleFormLogin}
-              >
-                Login
-              </button>
-            </div>
+                  onClick={() => setShowTraditionalLogin(true)}
+                >
+                  Use Traditional Login
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Traditional Login Fields */}
+                <div style={{ marginBottom: "10px" }}>
+                  <label style={{ fontWeight: "normal", fontFamily: "-moz-initial" }}>
+                    Email:
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      style={{
+                        marginLeft: "28px",
+                        padding: "2px",
+                        borderRadius: "3px",
+                        fontFamily: "sans-serif",
+                        fontWeight: "normal",
+                        border: "1px solid #ccc",
+                        width: "275px",
+                        height: "30px",
+                      }}
+                    />
+                  </label>
+                </div>
+                <div style={{ marginBottom: "10px" }}>
+                  <label style={{ fontWeight: "normal", fontFamily: "-moz-initial" }}>
+                    Password:
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      style={{
+                        marginLeft: "5px",
+                        padding: "5px",
+                        borderRadius: "3px",
+                        fontFamily: "sans-serif",
+                        fontWeight: "normal",
+                        border: "1px solid #ccc",
+                        width: "275px",
+                        height: "30px",
+                      }}
+                    />
+                  </label>
+                </div>
+                {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <button
+                    style={{
+                      backgroundColor: "#4CAF50",
+                      border: "none",
+                      color: "white",
+                      padding: "10px 20px",
+                      fontSize: "16px",
+                      margin: "5px 0",
+                      cursor: "pointer",
+                      borderRadius: "4px",
+                      transition: "background-color 0.3s ease",
+                    }}
+                    onClick={handleFormLogin}
+                  >
+                    Login
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
