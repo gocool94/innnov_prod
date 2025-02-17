@@ -90,7 +90,8 @@ async def get_users():
 @app.get("/fetch_ideas/")
 async def fetch_ideas():
     ideas = list(ideas_collection.find({}, {"_id": 0}))  # Exclude `_id`
-    return ideas
+    return clean_data(ideas)  # ✅ Fix NaN and Infinity issues
+
 
 # ✅ Assign an Idea to a Specific User (Fix: Using Pydantic Model)
 @app.put("/api/update-idea/{idea_id}")
@@ -194,6 +195,21 @@ async def get_idea(idea_id: str):
     if not idea:
         raise HTTPException(status_code=404, detail="Idea not found")
     return idea
+
+import math
+
+def clean_data(data):
+    """
+    Recursively replace NaN and Infinity values in dictionaries or lists with None.
+    """
+    if isinstance(data, dict):
+        return {k: clean_data(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [clean_data(v) for v in data]
+    elif isinstance(data, float) and (math.isnan(data) or math.isinf(data)):
+        return None  # Replace NaN and Infinity with None
+    return data
+
 
 # ✅ Fetch Review Ideas for a User
 @app.get("/api/review-ideas")
